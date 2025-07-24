@@ -99,6 +99,8 @@ export class AdminLoginPage {
         
         // Redirect to dashboard
         setTimeout(() => {
+          window.location.hash = '/admin/dashboard'
+          // Also dispatch the event as backup
           document.dispatchEvent(new CustomEvent('navigate', { detail: { path: '/admin/dashboard' } }))
         }, 1500)
       } else {
@@ -117,6 +119,7 @@ export class AdminLoginPage {
     // Demo credentials - in production, this would validate against a secure backend
     const validCredentials = [
       { username: 'admin', password: 'admin123' },
+      { username: 'admin@chapas.com', password: 'admin123' },
       { username: 'administrador', password: 'chapas2025' }
     ]
 
@@ -126,29 +129,19 @@ export class AdminLoginPage {
   }
 
   setAdminSession(remember = false) {
-    const sessionData = {
-      isLoggedIn: true,
-      loginTime: new Date().toISOString(),
-      role: 'admin'
-    }
-
+    // Simplified session - just store 'active' for easier checking
     if (remember) {
-      localStorage.setItem('admin_session', JSON.stringify(sessionData))
+      localStorage.setItem('admin_session', 'active')
     } else {
-      sessionStorage.setItem('admin_session', JSON.stringify(sessionData))
+      sessionStorage.setItem('admin_session', 'active')
     }
+    // Also set in localStorage for compatibility with dashboard check
+    localStorage.setItem('admin_session', 'active')
   }
 
   isAdminLoggedIn() {
-    const sessionData = localStorage.getItem('admin_session') || sessionStorage.getItem('admin_session')
-    if (!sessionData) return false
-
-    try {
-      const session = JSON.parse(sessionData)
-      return session.isLoggedIn === true
-    } catch (error) {
-      return false
-    }
+    return localStorage.getItem('admin_session') === 'active' || 
+           sessionStorage.getItem('admin_session') === 'active'
   }
 
   updateLoginButton(loading) {
@@ -168,7 +161,33 @@ export class AdminLoginPage {
   }
 
   showSuccess() {
-    this.showMessage('¡Acceso concedido! Redirigiendo...', 'success')
+    const message = document.createElement('div')
+    message.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: var(--success);
+      color: white;
+      padding: 1rem 1.5rem;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-lg);
+      z-index: 1000;
+      animation: slideIn 0.3s ease;
+    `
+    message.innerHTML = `
+      <div>¡Acceso concedido! Redirigiendo...</div>
+      <div style="margin-top: 0.5rem; font-size: 0.875rem;">
+        <a href="#/admin/dashboard" style="color: white; text-decoration: underline;">
+          Ir al Dashboard manualmente
+        </a>
+      </div>
+    `
+    
+    document.body.appendChild(message)
+    
+    setTimeout(() => {
+      message.remove()
+    }, 5000)
   }
 
   showError(message) {
