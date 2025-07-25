@@ -1,20 +1,20 @@
-import { CartService } from '../services/CartService.js'
+import { CartService } from "../services/CartService.js";
 
 export class Header {
   constructor() {
-    this.cartService = new CartService()
+    this.cartService = new CartService();
   }
 
   render() {
-    const headerElement = document.getElementById('header')
+    const headerElement = document.getElementById("header");
     if (!headerElement) {
-      console.error('Header element not found')
-      return
+      console.error("Header element not found");
+      return;
     }
-    
-    headerElement.innerHTML = this.getHTML()
-    this.attachEventListeners()
-    this.updateCartCount()
+
+    headerElement.innerHTML = this.getHTML();
+    this.attachEventListeners();
+    this.updateCartCount();
   }
 
   getHTML() {
@@ -41,47 +41,49 @@ export class Header {
           </div>
         </div>
       </div>
-    `
+    `;
   }
 
   attachEventListeners() {
     // Navigation links
-    document.querySelectorAll('[data-navigate]').forEach(link => {
-      link.addEventListener('click', (e) => {
-        e.preventDefault()
-        const path = e.currentTarget.getAttribute('href')
-        document.dispatchEvent(new CustomEvent('navigate', { detail: { path } }))
-      })
-    })
+    document.querySelectorAll("[data-navigate]").forEach((link) => {
+      link.addEventListener("click", (e) => {
+        e.preventDefault();
+        const path = e.currentTarget.getAttribute("href");
+        document.dispatchEvent(
+          new CustomEvent("navigate", { detail: { path } })
+        );
+      });
+    });
 
     // Cart toggle
-    const cartToggle = document.getElementById('cart-toggle')
+    const cartToggle = document.getElementById("cart-toggle");
     if (cartToggle) {
-      cartToggle.addEventListener('click', () => {
-        document.dispatchEvent(new CustomEvent('cart:toggle'))
-      })
+      cartToggle.addEventListener("click", () => {
+        document.dispatchEvent(new CustomEvent("cart:toggle"));
+      });
     }
 
     // Update active nav link
-    this.updateActiveLink()
+    this.updateActiveLink();
   }
 
   updateActiveLink() {
-    const currentPath = window.location.pathname
-    document.querySelectorAll('.nav-link').forEach(link => {
-      link.classList.remove('active')
-      if (link.getAttribute('href') === currentPath) {
-        link.classList.add('active')
+    const currentPath = window.location.pathname;
+    document.querySelectorAll(".nav-link").forEach((link) => {
+      link.classList.remove("active");
+      if (link.getAttribute("href") === currentPath) {
+        link.classList.add("active");
       }
-    })
+    });
   }
 
   updateCartCount() {
-    const cartCount = document.getElementById('cart-count')
+    const cartCount = document.getElementById("cart-count");
     if (cartCount) {
-      const count = this.cartService.getItemCount()
-      cartCount.textContent = count
-      cartCount.style.display = count > 0 ? 'flex' : 'none'
+      const count = this.cartService.getItemCount();
+      cartCount.textContent = count;
+      cartCount.style.display = count > 0 ? "flex" : "none";
     }
   }
 }

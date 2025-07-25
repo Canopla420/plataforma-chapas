@@ -1,20 +1,20 @@
-import { ProductService } from '../data/products.js'
+import { ProductService } from "../data/products.js";
 
 export class HomePage {
   constructor() {
-    this.featuredProducts = []
+    this.featuredProducts = [];
   }
 
   async render() {
     try {
-      this.featuredProducts = await ProductService.getFeaturedProducts()
-      
-      const appElement = document.getElementById('app')
-      appElement.innerHTML = this.getHTML()
-      this.attachEventListeners()
+      this.featuredProducts = await ProductService.getFeaturedProducts();
+
+      const appElement = document.getElementById("app");
+      appElement.innerHTML = this.getHTML();
+      this.attachEventListeners();
     } catch (error) {
-      console.error('Error loading home page:', error)
-      this.showError()
+      console.error("Error loading home page:", error);
+      this.showError();
     }
   }
 
@@ -178,86 +178,110 @@ export class HomePage {
           </div>
         </div>
       </section>
-    `
+    `;
   }
 
   renderFeaturedProducts() {
     if (this.featuredProducts.length === 0) {
-      return '<div class="loading"><div class="spinner"></div></div>'
+      return '<div class="loading"><div class="spinner"></div></div>';
     }
 
-    return this.featuredProducts.map(product => `
+    return this.featuredProducts
+      .map(
+        (product) => `
       <div class="product-card">
-        <div class="product-image" style="background-image: ${product.image ? `url(${product.image})` : 'none'}; background-size: cover; background-position: center;">
-          ${!product.image ? '<div style="display: flex; align-items: center; justify-content: center; height: 100%; font-size: 3rem; color: var(--text-secondary);">🏗️</div>' : ''}
+        <div class="product-image" style="background-image: ${
+          product.image ? `url(${product.image})` : "none"
+        }; background-size: cover; background-position: center;">
+          ${
+            !product.image
+              ? '<div style="display: flex; align-items: center; justify-content: center; height: 100%; font-size: 3rem; color: var(--text-secondary);">🏗️</div>'
+              : ""
+          }
         </div>
         <div class="product-info">
           <h3 class="product-title">${product.name}</h3>
-          <p class="product-description">${product.description.substring(0, 100)}...</p>
+          <p class="product-description">${product.description.substring(
+            0,
+            100
+          )}...</p>
           <div class="product-price">
-            Desde $${Math.min(...product.variants.map(v => v.price)).toFixed(2)}
+            Desde $${Math.min(...product.variants.map((v) => v.price)).toFixed(
+              2
+            )}
           </div>
           <div class="product-actions">
-            <button class="btn btn-primary" data-navigate="/producto/${product.id}">
+            <button class="btn btn-primary" data-navigate="/producto/${
+              product.id
+            }">
               Ver Detalles
             </button>
           </div>
         </div>
       </div>
-    `).join('')
+    `
+      )
+      .join("");
   }
 
   attachEventListeners() {
     // Navigation buttons
-    document.querySelectorAll('[data-navigate]').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const path = e.target.dataset.navigate || e.target.closest('[data-navigate]').dataset.navigate
-        document.dispatchEvent(new CustomEvent('navigate', { detail: { path } }))
-      })
-    })
+    document.querySelectorAll("[data-navigate]").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        const path =
+          e.target.dataset.navigate ||
+          e.target.closest("[data-navigate]").dataset.navigate;
+        document.dispatchEvent(
+          new CustomEvent("navigate", { detail: { path } })
+        );
+      });
+    });
 
     // Contact form
-    const contactForm = document.getElementById('contact-form')
+    const contactForm = document.getElementById("contact-form");
     if (contactForm) {
-      contactForm.addEventListener('submit', (e) => {
-        e.preventDefault()
-        this.handleContactForm(contactForm)
-      })
+      contactForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        this.handleContactForm(contactForm);
+      });
     }
   }
 
   handleContactForm(form) {
-    const formData = new FormData(form)
-    
+    const formData = new FormData(form);
+
     // In a real application, this would send to a server
-    console.log('Contact form submitted:', Object.fromEntries(formData))
-    
+    console.log("Contact form submitted:", Object.fromEntries(formData));
+
     // Show success message
-    document.dispatchEvent(new CustomEvent('modal:open', {
-      detail: {
-        title: 'Mensaje Enviado',
-        content: `
+    document.dispatchEvent(
+      new CustomEvent("modal:open", {
+        detail: {
+          title: "Mensaje Enviado",
+          content: `
           <div class="text-center">
             <div style="font-size: 3rem; color: var(--success); margin-bottom: 1rem;">✓</div>
             <p>Gracias por contactarnos. Te responderemos dentro de las próximas 24 horas.</p>
           </div>
         `,
-        footer: '<button class="btn btn-primary" onclick="document.dispatchEvent(new CustomEvent(\'modal:close\'))">Cerrar</button>'
-      }
-    }))
+          footer:
+            '<button class="btn btn-primary" onclick="document.dispatchEvent(new CustomEvent(\'modal:close\'))">Cerrar</button>',
+        },
+      })
+    );
 
-    form.reset()
+    form.reset();
   }
 
   showError() {
-    const appElement = document.getElementById('app')
+    const appElement = document.getElementById("app");
     appElement.innerHTML = `
       <div class="container p-4 text-center">
         <h1>Error al cargar la página</h1>
         <p>Hubo un problema al cargar el contenido. Por favor, intenta de nuevo.</p>
         <button class="btn btn-primary" onclick="location.reload()">Recargar Página</button>
       </div>
-    `
+    `;
   }
 
   cleanup() {

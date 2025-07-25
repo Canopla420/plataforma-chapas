@@ -1,18 +1,20 @@
 export class AdminLoginPage {
   constructor() {
-    this.isLoading = false
+    this.isLoading = false;
   }
 
   async render() {
     // Check if already logged in
     if (this.isAdminLoggedIn()) {
-      document.dispatchEvent(new CustomEvent('navigate', { detail: { path: '/admin/dashboard' } }))
-      return
+      document.dispatchEvent(
+        new CustomEvent("navigate", { detail: { path: "/admin/dashboard" } })
+      );
+      return;
     }
 
-    const appElement = document.getElementById('app')
-    appElement.innerHTML = this.getHTML()
-    this.attachEventListeners()
+    const appElement = document.getElementById("app");
+    appElement.innerHTML = this.getHTML();
+    this.attachEventListeners();
   }
 
   getHTML() {
@@ -62,106 +64,114 @@ export class AdminLoginPage {
           </div>
         </div>
       </div>
-    `
+    `;
   }
 
   attachEventListeners() {
-    const form = document.getElementById('admin-login-form')
+    const form = document.getElementById("admin-login-form");
     if (form) {
-      form.addEventListener('submit', (e) => {
-        e.preventDefault()
-        this.handleLogin(form)
-      })
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        this.handleLogin(form);
+      });
     }
   }
 
   async handleLogin(form) {
-    if (this.isLoading) return
+    if (this.isLoading) return;
 
-    this.isLoading = true
-    this.updateLoginButton(true)
+    this.isLoading = true;
+    this.updateLoginButton(true);
 
-    const formData = new FormData(form)
+    const formData = new FormData(form);
     const credentials = {
-      username: formData.get('username'),
-      password: formData.get('password'),
-      remember: formData.get('remember')
-    }
+      username: formData.get("username"),
+      password: formData.get("password"),
+      remember: formData.get("remember"),
+    };
 
     try {
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // Simple authentication (in production, this would be a secure API call)
-      if (this.validateCredentials(credentials.username, credentials.password)) {
-        this.setAdminSession(credentials.remember)
-        this.showSuccess()
-        
+      if (
+        this.validateCredentials(credentials.username, credentials.password)
+      ) {
+        this.setAdminSession(credentials.remember);
+        this.showSuccess();
+
         // Redirect to dashboard
         setTimeout(() => {
-          window.location.hash = '/admin/dashboard'
+          window.location.hash = "/admin/dashboard";
           // Also dispatch the event as backup
-          document.dispatchEvent(new CustomEvent('navigate', { detail: { path: '/admin/dashboard' } }))
-        }, 1500)
+          document.dispatchEvent(
+            new CustomEvent("navigate", {
+              detail: { path: "/admin/dashboard" },
+            })
+          );
+        }, 1500);
       } else {
-        this.showError('Usuario o contraseña incorrectos')
+        this.showError("Usuario o contraseña incorrectos");
       }
     } catch (error) {
-      console.error('Login error:', error)
-      this.showError('Error de conexión. Intenta de nuevo.')
+      console.error("Login error:", error);
+      this.showError("Error de conexión. Intenta de nuevo.");
     } finally {
-      this.isLoading = false
-      this.updateLoginButton(false)
+      this.isLoading = false;
+      this.updateLoginButton(false);
     }
   }
 
   validateCredentials(username, password) {
     // Demo credentials - in production, this would validate against a secure backend
     const validCredentials = [
-      { username: 'admin', password: 'admin123' },
-      { username: 'admin@chapas.com', password: 'admin123' },
-      { username: 'administrador', password: 'chapas2025' }
-    ]
+      { username: "admin", password: "admin123" },
+      { username: "admin@chapas.com", password: "admin123" },
+      { username: "administrador", password: "chapas2025" },
+    ];
 
-    return validCredentials.some(cred => 
-      cred.username === username && cred.password === password
-    )
+    return validCredentials.some(
+      (cred) => cred.username === username && cred.password === password
+    );
   }
 
   setAdminSession(remember = false) {
     // Simplified session - just store 'active' for easier checking
     if (remember) {
-      localStorage.setItem('admin_session', 'active')
+      localStorage.setItem("admin_session", "active");
     } else {
-      sessionStorage.setItem('admin_session', 'active')
+      sessionStorage.setItem("admin_session", "active");
     }
     // Also set in localStorage for compatibility with dashboard check
-    localStorage.setItem('admin_session', 'active')
+    localStorage.setItem("admin_session", "active");
   }
 
   isAdminLoggedIn() {
-    return localStorage.getItem('admin_session') === 'active' || 
-           sessionStorage.getItem('admin_session') === 'active'
+    return (
+      localStorage.getItem("admin_session") === "active" ||
+      sessionStorage.getItem("admin_session") === "active"
+    );
   }
 
   updateLoginButton(loading) {
-    const loginText = document.getElementById('login-text')
-    const loginSpinner = document.getElementById('login-spinner')
-    const loginBtn = document.getElementById('login-btn')
+    const loginText = document.getElementById("login-text");
+    const loginSpinner = document.getElementById("login-spinner");
+    const loginBtn = document.getElementById("login-btn");
 
     if (loading) {
-      loginText.classList.add('hidden')
-      loginSpinner.classList.remove('hidden')
-      loginBtn.disabled = true
+      loginText.classList.add("hidden");
+      loginSpinner.classList.remove("hidden");
+      loginBtn.disabled = true;
     } else {
-      loginText.classList.remove('hidden')
-      loginSpinner.classList.add('hidden')
-      loginBtn.disabled = false
+      loginText.classList.remove("hidden");
+      loginSpinner.classList.add("hidden");
+      loginBtn.disabled = false;
     }
   }
 
   showSuccess() {
-    const message = document.createElement('div')
+    const message = document.createElement("div");
     message.style.cssText = `
       position: fixed;
       top: 20px;
@@ -173,7 +183,7 @@ export class AdminLoginPage {
       box-shadow: var(--shadow-lg);
       z-index: 1000;
       animation: slideIn 0.3s ease;
-    `
+    `;
     message.innerHTML = `
       <div>¡Acceso concedido! Redirigiendo...</div>
       <div style="margin-top: 0.5rem; font-size: 0.875rem;">
@@ -181,27 +191,27 @@ export class AdminLoginPage {
           Ir al Dashboard manualmente
         </a>
       </div>
-    `
-    
-    document.body.appendChild(message)
-    
+    `;
+
+    document.body.appendChild(message);
+
     setTimeout(() => {
-      message.remove()
-    }, 5000)
+      message.remove();
+    }, 5000);
   }
 
   showError(message) {
-    this.showMessage(message, 'error')
+    this.showMessage(message, "error");
   }
 
-  showMessage(text, type = 'info') {
+  showMessage(text, type = "info") {
     const colors = {
-      success: 'var(--success)',
-      error: 'var(--error)',
-      info: 'var(--primary-color)'
-    }
+      success: "var(--success)",
+      error: "var(--error)",
+      info: "var(--primary-color)",
+    };
 
-    const message = document.createElement('div')
+    const message = document.createElement("div");
     message.style.cssText = `
       position: fixed;
       top: 20px;
@@ -213,14 +223,14 @@ export class AdminLoginPage {
       box-shadow: var(--shadow-lg);
       z-index: 1000;
       animation: slideIn 0.3s ease;
-    `
-    message.textContent = text
-    
-    document.body.appendChild(message)
-    
+    `;
+    message.textContent = text;
+
+    document.body.appendChild(message);
+
     setTimeout(() => {
-      message.remove()
-    }, 4000)
+      message.remove();
+    }, 4000);
   }
 
   cleanup() {

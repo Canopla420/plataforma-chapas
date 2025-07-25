@@ -1,25 +1,25 @@
-import { CartService } from '../services/CartService.js'
+import { CartService } from "../services/CartService.js";
 
 export class CartSidebar {
   constructor() {
-    this.cartService = new CartService()
-    this.isOpen = false
+    this.cartService = new CartService();
+    this.isOpen = false;
   }
 
   render() {
-    const sidebarElement = document.getElementById('cart-sidebar')
+    const sidebarElement = document.getElementById("cart-sidebar");
     if (!sidebarElement) {
-      console.error('Cart sidebar element not found')
-      return
+      console.error("Cart sidebar element not found");
+      return;
     }
-    
-    sidebarElement.innerHTML = this.getHTML()
-    this.attachEventListeners()
+
+    sidebarElement.innerHTML = this.getHTML();
+    this.attachEventListeners();
   }
 
   getHTML() {
-    const items = this.cartService.getItems()
-    const total = this.cartService.getTotal()
+    const items = this.cartService.getItems();
+    const total = this.cartService.getTotal();
 
     if (items.length === 0) {
       return `
@@ -37,7 +37,7 @@ export class CartSidebar {
             </button>
           </div>
         </div>
-      `
+      `;
     }
 
     return `
@@ -47,14 +47,16 @@ export class CartSidebar {
       </div>
       
       <div class="cart-content">
-        ${items.map(item => this.renderCartItem(item)).join('')}
+        ${items.map((item) => this.renderCartItem(item)).join("")}
       </div>
       
       <div class="cart-footer">
         <div style="margin-bottom: 1rem;">
           <div style="display: flex; justify-content: space-between; font-size: 1.125rem; font-weight: 600;">
             <span>Total:</span>
-            <span style="color: var(--primary-color);">$${total.toFixed(2)}</span>
+            <span style="color: var(--primary-color);">$${total.toFixed(
+              2
+            )}</span>
           </div>
           <p style="font-size: 0.75rem; color: var(--text-light); margin-top: 0.5rem;">
             *Precios sujetos a confirmación de stock
@@ -70,7 +72,7 @@ export class CartSidebar {
           </button>
         </div>
       </div>
-    `
+    `;
   }
 
   renderCartItem(item) {
@@ -88,7 +90,9 @@ export class CartSidebar {
             ${item.variant.size} - $${item.variant.price.toFixed(2)} c/u
           </div>
           <div class="cart-item-actions">
-            <button class="btn btn-secondary btn-sm" onclick="this.closest('.cart-sidebar').dispatchEvent(new CustomEvent('decrease-quantity', {detail: '${item.id}'}))">-</button>
+            <button class="btn btn-secondary btn-sm" onclick="this.closest('.cart-sidebar').dispatchEvent(new CustomEvent('decrease-quantity', {detail: '${
+              item.id
+            }'}))">-</button>
             <input 
               type="number" 
               class="quantity-input form-input" 
@@ -97,120 +101,128 @@ export class CartSidebar {
               max="999"
               data-item-id="${item.id}"
             />
-            <button class="btn btn-secondary btn-sm" onclick="this.closest('.cart-sidebar').dispatchEvent(new CustomEvent('increase-quantity', {detail: '${item.id}'}))">+</button>
-            <button class="btn btn-secondary btn-sm" onclick="this.closest('.cart-sidebar').dispatchEvent(new CustomEvent('remove-item', {detail: '${item.id}'}))" style="margin-left: 0.5rem; color: var(--error);">🗑️</button>
+            <button class="btn btn-secondary btn-sm" onclick="this.closest('.cart-sidebar').dispatchEvent(new CustomEvent('increase-quantity', {detail: '${
+              item.id
+            }'}))">+</button>
+            <button class="btn btn-secondary btn-sm" onclick="this.closest('.cart-sidebar').dispatchEvent(new CustomEvent('remove-item', {detail: '${
+              item.id
+            }'}))" style="margin-left: 0.5rem; color: var(--error);">🗑️</button>
           </div>
         </div>
       </div>
-    `
+    `;
   }
 
   attachEventListeners() {
-    const sidebar = document.getElementById('cart-sidebar')
+    const sidebar = document.getElementById("cart-sidebar");
 
     // Close cart
-    const closeBtn = sidebar.querySelector('#close-cart')
+    const closeBtn = sidebar.querySelector("#close-cart");
     if (closeBtn) {
-      closeBtn.addEventListener('click', () => this.close())
+      closeBtn.addEventListener("click", () => this.close());
     }
 
     // Browse products
-    const browseBtn = sidebar.querySelector('#browse-products')
+    const browseBtn = sidebar.querySelector("#browse-products");
     if (browseBtn) {
-      browseBtn.addEventListener('click', () => {
-        this.close()
-        document.dispatchEvent(new CustomEvent('navigate', { detail: { path: '/catalogo' } }))
-      })
+      browseBtn.addEventListener("click", () => {
+        this.close();
+        document.dispatchEvent(
+          new CustomEvent("navigate", { detail: { path: "/catalogo" } })
+        );
+      });
     }
 
     // Proceed to checkout
-    const checkoutBtn = sidebar.querySelector('#proceed-checkout')
+    const checkoutBtn = sidebar.querySelector("#proceed-checkout");
     if (checkoutBtn) {
-      checkoutBtn.addEventListener('click', () => {
-        this.close()
-        document.dispatchEvent(new CustomEvent('navigate', { detail: { path: '/checkout' } }))
-      })
+      checkoutBtn.addEventListener("click", () => {
+        this.close();
+        document.dispatchEvent(
+          new CustomEvent("navigate", { detail: { path: "/checkout" } })
+        );
+      });
     }
 
     // Clear cart
-    const clearBtn = sidebar.querySelector('#clear-cart')
+    const clearBtn = sidebar.querySelector("#clear-cart");
     if (clearBtn) {
-      clearBtn.addEventListener('click', () => {
-        if (confirm('¿Estás seguro de que quieres vaciar el carrito?')) {
-          this.cartService.clearCart()
-          this.render()
+      clearBtn.addEventListener("click", () => {
+        if (confirm("¿Estás seguro de que quieres vaciar el carrito?")) {
+          this.cartService.clearCart();
+          this.render();
         }
-      })
+      });
     }
 
     // Quantity inputs
-    sidebar.querySelectorAll('.quantity-input').forEach(input => {
-      input.addEventListener('change', (e) => {
-        const itemId = e.target.dataset.itemId
-        const quantity = parseInt(e.target.value)
+    sidebar.querySelectorAll(".quantity-input").forEach((input) => {
+      input.addEventListener("change", (e) => {
+        const itemId = e.target.dataset.itemId;
+        const quantity = parseInt(e.target.value);
         if (quantity > 0) {
-          this.cartService.updateQuantity(itemId, quantity)
-          this.render()
+          this.cartService.updateQuantity(itemId, quantity);
+          this.render();
         }
-      })
-    })
+      });
+    });
 
     // Custom events for quantity changes
-    sidebar.addEventListener('increase-quantity', (e) => {
-      const itemId = e.detail
-      const item = this.cartService.getItems().find(i => i.id === itemId)
+    sidebar.addEventListener("increase-quantity", (e) => {
+      const itemId = e.detail;
+      const item = this.cartService.getItems().find((i) => i.id === itemId);
       if (item) {
-        this.cartService.updateQuantity(itemId, item.quantity + 1)
-        this.render()
+        this.cartService.updateQuantity(itemId, item.quantity + 1);
+        this.render();
       }
-    })
+    });
 
-    sidebar.addEventListener('decrease-quantity', (e) => {
-      const itemId = e.detail
-      const item = this.cartService.getItems().find(i => i.id === itemId)
+    sidebar.addEventListener("decrease-quantity", (e) => {
+      const itemId = e.detail;
+      const item = this.cartService.getItems().find((i) => i.id === itemId);
       if (item && item.quantity > 1) {
-        this.cartService.updateQuantity(itemId, item.quantity - 1)
-        this.render()
+        this.cartService.updateQuantity(itemId, item.quantity - 1);
+        this.render();
       }
-    })
+    });
 
-    sidebar.addEventListener('remove-item', (e) => {
-      const itemId = e.detail
-      this.cartService.removeItem(itemId)
-      this.render()
-    })
+    sidebar.addEventListener("remove-item", (e) => {
+      const itemId = e.detail;
+      this.cartService.removeItem(itemId);
+      this.render();
+    });
   }
 
   toggle() {
     if (this.isOpen) {
-      this.close()
+      this.close();
     } else {
-      this.open()
+      this.open();
     }
   }
 
   open() {
-    this.render() // Update content
-    const sidebar = document.getElementById('cart-sidebar')
-    sidebar.classList.add('open')
-    this.isOpen = true
-    
+    this.render(); // Update content
+    const sidebar = document.getElementById("cart-sidebar");
+    sidebar.classList.add("open");
+    this.isOpen = true;
+
     // Add overlay
-    this.addOverlay()
+    this.addOverlay();
   }
 
   close() {
-    const sidebar = document.getElementById('cart-sidebar')
-    sidebar.classList.remove('open')
-    this.isOpen = false
-    
+    const sidebar = document.getElementById("cart-sidebar");
+    sidebar.classList.remove("open");
+    this.isOpen = false;
+
     // Remove overlay
-    this.removeOverlay()
+    this.removeOverlay();
   }
 
   addOverlay() {
-    const overlay = document.createElement('div')
-    overlay.id = 'cart-overlay'
+    const overlay = document.createElement("div");
+    overlay.id = "cart-overlay";
     overlay.style.cssText = `
       position: fixed;
       top: 0;
@@ -220,15 +232,15 @@ export class CartSidebar {
       background: rgba(0, 0, 0, 0.5);
       z-index: 150;
       cursor: pointer;
-    `
-    overlay.addEventListener('click', () => this.close())
-    document.body.appendChild(overlay)
+    `;
+    overlay.addEventListener("click", () => this.close());
+    document.body.appendChild(overlay);
   }
 
   removeOverlay() {
-    const overlay = document.getElementById('cart-overlay')
+    const overlay = document.getElementById("cart-overlay");
     if (overlay) {
-      overlay.remove()
+      overlay.remove();
     }
   }
 }

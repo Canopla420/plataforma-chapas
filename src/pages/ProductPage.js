@@ -1,32 +1,32 @@
-import { ProductService } from '../data/products.js'
-import { CartService } from '../services/CartService.js'
+import { ProductService } from "../data/products.js";
+import { CartService } from "../services/CartService.js";
 
 export class ProductPage {
   constructor(params) {
-    this.productId = params.id
-    this.product = null
-    this.selectedVariant = null
-    this.quantity = 1
-    this.cartService = new CartService()
+    this.productId = params.id;
+    this.product = null;
+    this.selectedVariant = null;
+    this.quantity = 1;
+    this.cartService = new CartService();
   }
 
   async render() {
     try {
-      this.product = await ProductService.getProductById(this.productId)
-      this.selectedVariant = this.product.variants[0] // Select first variant by default
-      
-      const appElement = document.getElementById('app')
-      appElement.innerHTML = this.getHTML()
-      this.attachEventListeners()
+      this.product = await ProductService.getProductById(this.productId);
+      this.selectedVariant = this.product.variants[0]; // Select first variant by default
+
+      const appElement = document.getElementById("app");
+      appElement.innerHTML = this.getHTML();
+      this.attachEventListeners();
     } catch (error) {
-      console.error('Error loading product:', error)
-      this.showError()
+      console.error("Error loading product:", error);
+      this.showError();
     }
   }
 
   getHTML() {
     if (!this.product) {
-      return '<div class="loading"><div class="spinner"></div></div>'
+      return '<div class="loading"><div class="spinner"></div></div>';
     }
 
     return `
@@ -52,19 +52,29 @@ export class ProductPage {
                 onerror="this.src='/images/placeholder.jpg'"
               />
             </div>
-            ${this.product.images && this.product.images.length > 1 ? `
+            ${
+              this.product.images && this.product.images.length > 1
+                ? `
               <div style="display: flex; gap: 0.5rem; overflow-x: auto;">
-                ${this.product.images.map((img, index) => `
+                ${this.product.images
+                  .map(
+                    (img, index) => `
                   <img 
                     src="${img}" 
                     alt="${this.product.name} - ${index + 1}"
-                    style="width: 80px; height: 80px; object-fit: cover; border-radius: var(--border-radius); border: 1px solid var(--border-color); cursor: pointer; opacity: ${img === this.product.image ? '1' : '0.7'};"
+                    style="width: 80px; height: 80px; object-fit: cover; border-radius: var(--border-radius); border: 1px solid var(--border-color); cursor: pointer; opacity: ${
+                      img === this.product.image ? "1" : "0.7"
+                    };"
                     onclick="this.closest('.container').querySelector('#main-image').src = '${img}'"
                     onerror="this.src='/images/placeholder.jpg'"
                   />
-                `).join('')}
+                `
+                  )
+                  .join("")}
               </div>
-            ` : ''}
+            `
+                : ""
+            }
           </div>
 
           <!-- Product Info -->
@@ -72,7 +82,9 @@ export class ProductPage {
             <h1 style="margin-bottom: 1rem;">${this.product.name}</h1>
             
             <div style="margin-bottom: 2rem;">
-              <p style="font-size: 1.125rem; line-height: 1.6;">${this.product.description}</p>
+              <p style="font-size: 1.125rem; line-height: 1.6;">${
+                this.product.description
+              }</p>
             </div>
 
             <!-- Product Details -->
@@ -99,29 +111,41 @@ export class ProductPage {
             </div>
 
             <!-- Features -->
-            ${this.product.features && this.product.features.length > 0 ? `
+            ${
+              this.product.features && this.product.features.length > 0
+                ? `
               <div style="margin-bottom: 2rem;">
                 <h3 style="margin-bottom: 1rem;">Características</h3>
                 <ul style="list-style: none; padding: 0;">
-                  ${this.product.features.map(feature => `
+                  ${this.product.features
+                    .map(
+                      (feature) => `
                     <li style="display: flex; align-items: center; margin-bottom: 0.5rem;">
                       <span style="color: var(--success); margin-right: 0.5rem;">✓</span>
                       <span>${feature}</span>
                     </li>
-                  `).join('')}
+                  `
+                    )
+                    .join("")}
                 </ul>
               </div>
-            ` : ''}
+            `
+                : ""
+            }
 
             <!-- Variant Selection -->
             <div style="margin-bottom: 2rem;">
               <label class="form-label">Seleccionar Tamaño:</label>
               <select id="variant-select" class="form-select">
-                ${this.product.variants.map((variant, index) => `
-                  <option value="${index}" ${index === 0 ? 'selected' : ''}>
+                ${this.product.variants
+                  .map(
+                    (variant, index) => `
+                  <option value="${index}" ${index === 0 ? "selected" : ""}>
                     ${variant.size} - $${variant.price.toFixed(2)}
                   </option>
-                `).join('')}
+                `
+                  )
+                  .join("")}
               </select>
             </div>
 
@@ -156,7 +180,9 @@ export class ProductPage {
               
               <div style="display: flex; gap: 1rem;">
                 <button class="btn btn-primary btn-lg" id="add-to-cart" style="flex: 1;">
-                  Agregar al Carrito - $<span id="total-price">${this.selectedVariant.price.toFixed(2)}</span>
+                  Agregar al Carrito - $<span id="total-price">${this.selectedVariant.price.toFixed(
+                    2
+                  )}</span>
                 </button>
                 <button class="btn btn-outline" id="buy-now">
                   Comprar Ahora
@@ -185,92 +211,94 @@ export class ProductPage {
           </div>
         </div>
       </div>
-    `
+    `;
   }
 
   attachEventListeners() {
     // Variant selection
-    const variantSelect = document.getElementById('variant-select')
+    const variantSelect = document.getElementById("variant-select");
     if (variantSelect) {
-      variantSelect.addEventListener('change', (e) => {
-        const variantIndex = parseInt(e.target.value)
-        this.selectedVariant = this.product.variants[variantIndex]
-        this.updatePrice()
-      })
+      variantSelect.addEventListener("change", (e) => {
+        const variantIndex = parseInt(e.target.value);
+        this.selectedVariant = this.product.variants[variantIndex];
+        this.updatePrice();
+      });
     }
 
     // Quantity controls
-    const quantityInput = document.getElementById('quantity-input')
-    const decreaseBtn = document.getElementById('decrease-qty')
-    const increaseBtn = document.getElementById('increase-qty')
+    const quantityInput = document.getElementById("quantity-input");
+    const decreaseBtn = document.getElementById("decrease-qty");
+    const increaseBtn = document.getElementById("increase-qty");
 
     if (quantityInput) {
-      quantityInput.addEventListener('change', (e) => {
-        this.quantity = Math.max(1, parseInt(e.target.value) || 1)
-        this.updatePrice()
-      })
+      quantityInput.addEventListener("change", (e) => {
+        this.quantity = Math.max(1, parseInt(e.target.value) || 1);
+        this.updatePrice();
+      });
     }
 
     if (decreaseBtn) {
-      decreaseBtn.addEventListener('click', () => {
+      decreaseBtn.addEventListener("click", () => {
         if (this.quantity > 1) {
-          this.quantity--
-          quantityInput.value = this.quantity
-          this.updatePrice()
+          this.quantity--;
+          quantityInput.value = this.quantity;
+          this.updatePrice();
         }
-      })
+      });
     }
 
     if (increaseBtn) {
-      increaseBtn.addEventListener('click', () => {
-        this.quantity++
-        quantityInput.value = this.quantity
-        this.updatePrice()
-      })
+      increaseBtn.addEventListener("click", () => {
+        this.quantity++;
+        quantityInput.value = this.quantity;
+        this.updatePrice();
+      });
     }
 
     // Add to cart
-    const addToCartBtn = document.getElementById('add-to-cart')
+    const addToCartBtn = document.getElementById("add-to-cart");
     if (addToCartBtn) {
-      addToCartBtn.addEventListener('click', () => {
-        this.addToCart()
-      })
+      addToCartBtn.addEventListener("click", () => {
+        this.addToCart();
+      });
     }
 
     // Buy now
-    const buyNowBtn = document.getElementById('buy-now')
+    const buyNowBtn = document.getElementById("buy-now");
     if (buyNowBtn) {
-      buyNowBtn.addEventListener('click', () => {
-        this.addToCart()
-        document.dispatchEvent(new CustomEvent('navigate', { detail: { path: '/checkout' } }))
-      })
+      buyNowBtn.addEventListener("click", () => {
+        this.addToCart();
+        document.dispatchEvent(
+          new CustomEvent("navigate", { detail: { path: "/checkout" } })
+        );
+      });
     }
 
     // Load related products
-    this.loadRelatedProducts()
+    this.loadRelatedProducts();
   }
 
   updatePrice() {
-    const priceDisplay = document.getElementById('price-display')
-    const totalPrice = document.getElementById('total-price')
-    
+    const priceDisplay = document.getElementById("price-display");
+    const totalPrice = document.getElementById("total-price");
+
     if (priceDisplay) {
-      priceDisplay.textContent = `$${this.selectedVariant.price.toFixed(2)}`
+      priceDisplay.textContent = `$${this.selectedVariant.price.toFixed(2)}`;
     }
-    
+
     if (totalPrice) {
-      const total = this.selectedVariant.price * this.quantity
-      totalPrice.textContent = total.toFixed(2)
+      const total = this.selectedVariant.price * this.quantity;
+      totalPrice.textContent = total.toFixed(2);
     }
   }
 
   addToCart() {
-    this.cartService.addItem(this.product, this.quantity, this.selectedVariant)
-    this.showAddToCartFeedback()
+    this.cartService.addItem(this.product, this.quantity, this.selectedVariant);
+    this.showAddToCartFeedback();
   }
 
   showAddToCartFeedback() {
-    const message = document.createElement('div')
+    const message = document.createElement("div");
     message.style.cssText = `
       position: fixed;
       top: 100px;
@@ -282,32 +310,37 @@ export class ProductPage {
       box-shadow: var(--shadow-lg);
       z-index: 1000;
       animation: slideIn 0.3s ease;
-    `
+    `;
     message.innerHTML = `
       <div style="display: flex; align-items: center; gap: 0.5rem;">
         <span>✓</span>
         <span>${this.quantity} x "${this.product.name}" agregado al carrito</span>
       </div>
-    `
-    
-    document.body.appendChild(message)
-    
+    `;
+
+    document.body.appendChild(message);
+
     setTimeout(() => {
-      message.style.animation = 'slideOut 0.3s ease'
-      setTimeout(() => message.remove(), 300)
-    }, 3000)
+      message.style.animation = "slideOut 0.3s ease";
+      setTimeout(() => message.remove(), 300);
+    }, 3000);
   }
 
   async loadRelatedProducts() {
     try {
-      const allProducts = await ProductService.getAllProducts()
+      const allProducts = await ProductService.getAllProducts();
       const related = allProducts
-        .filter(p => p.id !== this.product.id && p.category === this.product.category)
-        .slice(0, 3)
+        .filter(
+          (p) =>
+            p.id !== this.product.id && p.category === this.product.category
+        )
+        .slice(0, 3);
 
-      const relatedContainer = document.getElementById('related-products')
+      const relatedContainer = document.getElementById("related-products");
       if (relatedContainer && related.length > 0) {
-        relatedContainer.innerHTML = related.map(product => `
+        relatedContainer.innerHTML = related
+          .map(
+            (product) => `
           <div class="product-card">
             <img 
               src="${product.image}" 
@@ -317,18 +350,27 @@ export class ProductPage {
             />
             <div class="product-info">
               <h3 class="product-title">${product.name}</h3>
-              <p class="product-description">${product.description.substring(0, 100)}...</p>
+              <p class="product-description">${product.description.substring(
+                0,
+                100
+              )}...</p>
               <div class="product-price">
-                Desde $${Math.min(...product.variants.map(v => v.price)).toFixed(2)}
+                Desde $${Math.min(
+                  ...product.variants.map((v) => v.price)
+                ).toFixed(2)}
               </div>
               <div class="product-actions">
-                <button class="btn btn-primary" onclick="document.dispatchEvent(new CustomEvent('navigate', {detail: {path: '/producto/${product.id}'}}))">
+                <button class="btn btn-primary" onclick="document.dispatchEvent(new CustomEvent('navigate', {detail: {path: '/producto/${
+                  product.id
+                }'}}))">
                   Ver Detalles
                 </button>
               </div>
             </div>
           </div>
-        `).join('')
+        `
+          )
+          .join("");
       } else if (relatedContainer) {
         relatedContainer.innerHTML = `
           <div style="grid-column: 1 / -1; text-center; padding: 2rem;">
@@ -337,15 +379,15 @@ export class ProductPage {
               Ver Todos los Productos
             </button>
           </div>
-        `
+        `;
       }
     } catch (error) {
-      console.error('Error loading related products:', error)
+      console.error("Error loading related products:", error);
     }
   }
 
   showError() {
-    const appElement = document.getElementById('app')
+    const appElement = document.getElementById("app");
     appElement.innerHTML = `
       <div class="container p-4 text-center">
         <h1>Producto no encontrado</h1>
@@ -359,7 +401,7 @@ export class ProductPage {
           </button>
         </div>
       </div>
-    `
+    `;
   }
 
   cleanup() {

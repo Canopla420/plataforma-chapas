@@ -1,22 +1,22 @@
-import { CartService } from '../services/CartService.js'
+import { CartService } from "../services/CartService.js";
 
 export class CartPage {
   constructor() {
-    this.cartService = new CartService()
-    this.items = []
+    this.cartService = new CartService();
+    this.items = [];
   }
 
   async render() {
-    this.items = this.cartService.getItems()
-    
-    const appElement = document.getElementById('app')
-    appElement.innerHTML = this.getHTML()
-    this.attachEventListeners()
+    this.items = this.cartService.getItems();
+
+    const appElement = document.getElementById("app");
+    appElement.innerHTML = this.getHTML();
+    this.attachEventListeners();
   }
 
   getHTML() {
     if (this.items.length === 0) {
-      return this.getEmptyCartHTML()
+      return this.getEmptyCartHTML();
     }
 
     return `
@@ -47,7 +47,9 @@ export class CartPage {
                 </div>
                 <div style="border-top: 1px solid var(--border-color); padding-top: 0.5rem; display: flex; justify-content: space-between; font-size: 1.125rem; font-weight: 600;">
                   <span>Total:</span>
-                  <span style="color: var(--primary-color);">$${this.cartService.getTotal().toFixed(2)}</span>
+                  <span style="color: var(--primary-color);">$${this.cartService
+                    .getTotal()
+                    .toFixed(2)}</span>
                 </div>
               </div>
 
@@ -63,7 +65,7 @@ export class CartPage {
           </div>
         </div>
       </div>
-    `
+    `;
   }
 
   getEmptyCartHTML() {
@@ -78,11 +80,13 @@ export class CartPage {
           Explorar Productos
         </button>
       </div>
-    `
+    `;
   }
 
   renderCartItems() {
-    return this.items.map(item => `
+    return this.items
+      .map(
+        (item) => `
       <div class="cart-item" style="background: white; padding: 1.5rem; border-radius: var(--border-radius); box-shadow: var(--shadow-sm); margin-bottom: 1rem;">
         <div style="display: flex; gap: 1rem;">
           <img 
@@ -93,45 +97,61 @@ export class CartPage {
           />
           <div style="flex: 1;">
             <h3 style="margin-bottom: 0.5rem;">${item.product.name}</h3>
-            <p style="color: var(--text-secondary); margin-bottom: 0.5rem;">${item.variant.size}</p>
-            <p style="font-weight: 600; color: var(--primary-color);">$${item.variant.price.toFixed(2)} c/u</p>
+            <p style="color: var(--text-secondary); margin-bottom: 0.5rem;">${
+              item.variant.size
+            }</p>
+            <p style="font-weight: 600; color: var(--primary-color);">$${item.variant.price.toFixed(
+              2
+            )} c/u</p>
           </div>
           <div style="text-align: right;">
             <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
-              <button class="btn btn-sm btn-secondary" onclick="this.updateQuantity('${item.id}', ${item.quantity - 1})">-</button>
-              <span style="padding: 0.5rem 1rem; background: var(--bg-secondary); border-radius: var(--border-radius);">${item.quantity}</span>
-              <button class="btn btn-sm btn-secondary" onclick="this.updateQuantity('${item.id}', ${item.quantity + 1})">+</button>
+              <button class="btn btn-sm btn-secondary" onclick="this.updateQuantity('${
+                item.id
+              }', ${item.quantity - 1})">-</button>
+              <span style="padding: 0.5rem 1rem; background: var(--bg-secondary); border-radius: var(--border-radius);">${
+                item.quantity
+              }</span>
+              <button class="btn btn-sm btn-secondary" onclick="this.updateQuantity('${
+                item.id
+              }', ${item.quantity + 1})">+</button>
             </div>
-            <div style="font-weight: 600; margin-bottom: 1rem;">$${(item.quantity * item.variant.price).toFixed(2)}</div>
-            <button class="btn btn-sm" style="background: var(--error); color: white;" onclick="this.removeItem('${item.id}')">
+            <div style="font-weight: 600; margin-bottom: 1rem;">$${(
+              item.quantity * item.variant.price
+            ).toFixed(2)}</div>
+            <button class="btn btn-sm" style="background: var(--error); color: white;" onclick="this.removeItem('${
+              item.id
+            }')">
               Eliminar
             </button>
           </div>
         </div>
       </div>
-    `).join('')
+    `
+      )
+      .join("");
   }
 
   getTotalItems() {
-    return this.items.reduce((total, item) => total + item.quantity, 0)
+    return this.items.reduce((total, item) => total + item.quantity, 0);
   }
 
   attachEventListeners() {
     // Add methods to window for inline handlers
     window.updateQuantity = (itemId, newQuantity) => {
-      this.cartService.updateQuantity(itemId, newQuantity)
-      this.render() // Re-render
-    }
+      this.cartService.updateQuantity(itemId, newQuantity);
+      this.render(); // Re-render
+    };
 
     window.removeItem = (itemId) => {
-      this.cartService.removeItem(itemId)
-      this.render() // Re-render
-    }
+      this.cartService.removeItem(itemId);
+      this.render(); // Re-render
+    };
   }
 
   cleanup() {
     // Clean up global methods
-    delete window.updateQuantity
-    delete window.removeItem
+    delete window.updateQuantity;
+    delete window.removeItem;
   }
 }

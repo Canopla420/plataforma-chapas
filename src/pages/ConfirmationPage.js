@@ -1,29 +1,29 @@
 export class ConfirmationPage {
   constructor(params) {
-    this.orderId = params.orderId
-    this.order = null
+    this.orderId = params.orderId;
+    this.order = null;
   }
 
   async render() {
-    this.loadOrder()
-    
-    const appElement = document.getElementById('app')
-    appElement.innerHTML = this.getHTML()
-    this.attachEventListeners()
+    this.loadOrder();
+
+    const appElement = document.getElementById("app");
+    appElement.innerHTML = this.getHTML();
+    this.attachEventListeners();
   }
 
   loadOrder() {
     try {
-      const orders = JSON.parse(localStorage.getItem('orders') || '[]')
-      this.order = orders.find(order => order.id === this.orderId)
+      const orders = JSON.parse(localStorage.getItem("orders") || "[]");
+      this.order = orders.find((order) => order.id === this.orderId);
     } catch (error) {
-      console.error('Error loading order:', error)
+      console.error("Error loading order:", error);
     }
   }
 
   getHTML() {
     if (!this.order) {
-      return this.getOrderNotFoundHTML()
+      return this.getOrderNotFoundHTML();
     }
 
     return `
@@ -47,11 +47,15 @@ export class ConfirmationPage {
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
                   <div>
                     <span style="color: var(--text-secondary); font-size: 0.875rem;">Número de Pedido:</span>
-                    <div style="font-weight: 600; font-size: 1.125rem;">${this.order.id}</div>
+                    <div style="font-weight: 600; font-size: 1.125rem;">${
+                      this.order.id
+                    }</div>
                   </div>
                   <div>
                     <span style="color: var(--text-secondary); font-size: 0.875rem;">Fecha:</span>
-                    <div style="font-weight: 600;">${new Date(this.order.createdAt).toLocaleDateString('es-ES')}</div>
+                    <div style="font-weight: 600;">${new Date(
+                      this.order.createdAt
+                    ).toLocaleDateString("es-ES")}</div>
                   </div>
                 </div>
                 
@@ -68,7 +72,9 @@ export class ConfirmationPage {
                 <h3 style="margin-bottom: 1rem;">Datos del Cliente</h3>
                 <div style="background: var(--bg-secondary); padding: 1.5rem; border-radius: var(--border-radius);">
                   <div style="margin-bottom: 0.5rem;">
-                    <strong>${this.order.customer.firstName} ${this.order.customer.lastName}</strong>
+                    <strong>${this.order.customer.firstName} ${
+      this.order.customer.lastName
+    }</strong>
                   </div>
                   <div style="color: var(--text-secondary); margin-bottom: 0.5rem;">
                     📧 ${this.order.customer.email}
@@ -77,8 +83,14 @@ export class ConfirmationPage {
                     📞 ${this.order.customer.phone}
                   </div>
                   <div style="color: var(--text-secondary);">
-                    📍 ${this.order.customer.address}, ${this.order.customer.city}
-                    ${this.order.customer.zipCode ? `, ${this.order.customer.zipCode}` : ''}
+                    📍 ${this.order.customer.address}, ${
+      this.order.customer.city
+    }
+                    ${
+                      this.order.customer.zipCode
+                        ? `, ${this.order.customer.zipCode}`
+                        : ""
+                    }
                   </div>
                 </div>
               </div>
@@ -87,7 +99,9 @@ export class ConfirmationPage {
               <div>
                 <h3 style="margin-bottom: 1rem;">Productos Pedidos</h3>
                 <div>
-                  ${this.order.items.map(item => `
+                  ${this.order.items
+                    .map(
+                      (item) => `
                     <div style="display: flex; gap: 1rem; padding: 1rem; border: 1px solid var(--border-color); border-radius: var(--border-radius); margin-bottom: 1rem;">
                       <img 
                         src="${item.product.image}" 
@@ -96,16 +110,22 @@ export class ConfirmationPage {
                         onerror="this.src='/images/placeholder.jpg'"
                       />
                       <div style="flex: 1;">
-                        <div style="font-weight: 600; margin-bottom: 0.25rem;">${item.product.name}</div>
+                        <div style="font-weight: 600; margin-bottom: 0.25rem;">${
+                          item.product.name
+                        }</div>
                         <div style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 0.25rem;">
                           ${item.variant.size}
                         </div>
                         <div style="color: var(--text-secondary); font-size: 0.875rem;">
-                          ${item.quantity} x $${item.variant.price.toFixed(2)} = $${(item.quantity * item.variant.price).toFixed(2)}
+                          ${item.quantity} x $${item.variant.price.toFixed(
+                        2
+                      )} = $${(item.quantity * item.variant.price).toFixed(2)}
                         </div>
                       </div>
                     </div>
-                  `).join('')}
+                  `
+                    )
+                    .join("")}
                 </div>
                 
                 <div style="text-align: right; padding: 1rem; background: var(--bg-secondary); border-radius: var(--border-radius); margin-top: 1rem;">
@@ -151,7 +171,9 @@ export class ConfirmationPage {
               <div style="background: var(--bg-secondary); padding: 1rem; border-radius: var(--border-radius);">
                 <div style="font-weight: 600; margin-bottom: 0.5rem; color: var(--primary-color);">📧 Email de Confirmación</div>
                 <p style="font-size: 0.875rem; color: var(--text-secondary); margin: 0;">
-                  Hemos enviado una copia de tu pedido a <strong>${this.order.customer.email}</strong>. 
+                  Hemos enviado una copia de tu pedido a <strong>${
+                    this.order.customer.email
+                  }</strong>. 
                   Te contactaremos dentro de las próximas 24 horas.
                 </p>
               </div>
@@ -197,7 +219,7 @@ export class ConfirmationPage {
           </div>
         </div>
       </div>
-    `
+    `;
   }
 
   getOrderNotFoundHTML() {
@@ -217,7 +239,7 @@ export class ConfirmationPage {
           </button>
         </div>
       </div>
-    `
+    `;
   }
 
   attachEventListeners() {

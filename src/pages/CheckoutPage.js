@@ -1,25 +1,27 @@
-import { CartService } from '../services/CartService.js'
+import { CartService } from "../services/CartService.js";
 
 export class CheckoutPage {
   constructor() {
-    this.cartService = new CartService()
-    this.items = []
-    this.total = 0
+    this.cartService = new CartService();
+    this.items = [];
+    this.total = 0;
   }
 
   async render() {
-    this.items = this.cartService.getItems()
-    this.total = this.cartService.getTotal()
+    this.items = this.cartService.getItems();
+    this.total = this.cartService.getTotal();
 
     // Redirect to cart if empty
     if (this.items.length === 0) {
-      document.dispatchEvent(new CustomEvent('navigate', { detail: { path: '/catalogo' } }))
-      return
+      document.dispatchEvent(
+        new CustomEvent("navigate", { detail: { path: "/catalogo" } })
+      );
+      return;
     }
 
-    const appElement = document.getElementById('app')
-    appElement.innerHTML = this.getHTML()
-    this.attachEventListeners()
+    const appElement = document.getElementById("app");
+    appElement.innerHTML = this.getHTML();
+    this.attachEventListeners();
   }
 
   getHTML() {
@@ -110,7 +112,9 @@ export class CheckoutPage {
               
               <!-- Order Items -->
               <div style="margin-bottom: 1.5rem;">
-                ${this.items.map(item => `
+                ${this.items
+                  .map(
+                    (item) => `
                   <div style="display: flex; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid var(--border-color);">
                     <img 
                       src="${item.product.image}" 
@@ -119,16 +123,22 @@ export class CheckoutPage {
                       onerror="this.src='/images/placeholder.jpg'"
                     />
                     <div style="flex: 1;">
-                      <div style="font-weight: 600; margin-bottom: 0.25rem;">${item.product.name}</div>
+                      <div style="font-weight: 600; margin-bottom: 0.25rem;">${
+                        item.product.name
+                      }</div>
                       <div style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 0.25rem;">
                         ${item.variant.size}
                       </div>
                       <div style="font-size: 0.875rem; color: var(--text-secondary);">
-                        ${item.quantity} x $${item.variant.price.toFixed(2)} = $${(item.quantity * item.variant.price).toFixed(2)}
+                        ${item.quantity} x $${item.variant.price.toFixed(
+                      2
+                    )} = $${(item.quantity * item.variant.price).toFixed(2)}
                       </div>
                     </div>
                   </div>
-                `).join('')}
+                `
+                  )
+                  .join("")}
               </div>
 
               <!-- Totals -->
@@ -143,7 +153,9 @@ export class CheckoutPage {
                 </div>
                 <div style="border-top: 1px solid var(--border-color); padding-top: 0.5rem; display: flex; justify-content: space-between; font-size: 1.125rem; font-weight: 600;">
                   <span>Total:</span>
-                  <span style="color: var(--primary-color);">$${this.total.toFixed(2)}</span>
+                  <span style="color: var(--primary-color);">$${this.total.toFixed(
+                    2
+                  )}</span>
                 </div>
               </div>
 
@@ -171,154 +183,172 @@ export class CheckoutPage {
           </div>
         </div>
       </div>
-    `
+    `;
   }
 
   attachEventListeners() {
-    const form = document.getElementById('checkout-form')
+    const form = document.getElementById("checkout-form");
     if (form) {
-      form.addEventListener('submit', (e) => {
-        e.preventDefault()
-        this.handleSubmit(form)
-      })
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        this.handleSubmit(form);
+      });
     }
 
     // Real-time form validation
-    const requiredInputs = form.querySelectorAll('input[required], textarea[required]')
-    requiredInputs.forEach(input => {
-      input.addEventListener('blur', () => {
-        this.validateField(input)
-      })
-    })
+    const requiredInputs = form.querySelectorAll(
+      "input[required], textarea[required]"
+    );
+    requiredInputs.forEach((input) => {
+      input.addEventListener("blur", () => {
+        this.validateField(input);
+      });
+    });
   }
 
   validateField(field) {
-    const isValid = field.checkValidity()
-    
+    const isValid = field.checkValidity();
+
     if (!isValid) {
-      field.style.borderColor = 'var(--error)'
-      if (!field.nextElementSibling || !field.nextElementSibling.classList.contains('error-message')) {
-        const errorMsg = document.createElement('div')
-        errorMsg.className = 'error-message'
-        errorMsg.style.cssText = 'color: var(--error); font-size: 0.875rem; margin-top: 0.25rem;'
-        errorMsg.textContent = field.validationMessage || 'Este campo es requerido'
-        field.parentNode.insertBefore(errorMsg, field.nextSibling)
+      field.style.borderColor = "var(--error)";
+      if (
+        !field.nextElementSibling ||
+        !field.nextElementSibling.classList.contains("error-message")
+      ) {
+        const errorMsg = document.createElement("div");
+        errorMsg.className = "error-message";
+        errorMsg.style.cssText =
+          "color: var(--error); font-size: 0.875rem; margin-top: 0.25rem;";
+        errorMsg.textContent =
+          field.validationMessage || "Este campo es requerido";
+        field.parentNode.insertBefore(errorMsg, field.nextSibling);
       }
     } else {
-      field.style.borderColor = 'var(--border-color)'
-      const errorMsg = field.nextElementSibling
-      if (errorMsg && errorMsg.classList.contains('error-message')) {
-        errorMsg.remove()
+      field.style.borderColor = "var(--border-color)";
+      const errorMsg = field.nextElementSibling;
+      if (errorMsg && errorMsg.classList.contains("error-message")) {
+        errorMsg.remove();
       }
     }
-    
-    return isValid
+
+    return isValid;
   }
 
   validateForm(form) {
-    let isValid = true
-    const requiredFields = form.querySelectorAll('input[required], textarea[required]')
-    
-    requiredFields.forEach(field => {
+    let isValid = true;
+    const requiredFields = form.querySelectorAll(
+      "input[required], textarea[required]"
+    );
+
+    requiredFields.forEach((field) => {
       if (!this.validateField(field)) {
-        isValid = false
+        isValid = false;
       }
-    })
+    });
 
     // Additional validation
-    const email = form.querySelector('input[type="email"]')
+    const email = form.querySelector('input[type="email"]');
     if (email && email.value && !this.isValidEmail(email.value)) {
-      this.showFieldError(email, 'Por favor ingresa un email válido')
-      isValid = false
+      this.showFieldError(email, "Por favor ingresa un email válido");
+      isValid = false;
     }
 
-    const phone = form.querySelector('input[type="tel"]')
+    const phone = form.querySelector('input[type="tel"]');
     if (phone && phone.value && !this.isValidPhone(phone.value)) {
-      this.showFieldError(phone, 'Por favor ingresa un teléfono válido')
-      isValid = false
+      this.showFieldError(phone, "Por favor ingresa un teléfono válido");
+      isValid = false;
     }
 
-    return isValid
+    return isValid;
   }
 
   isValidEmail(email) {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   }
 
   isValidPhone(phone) {
-    return /^[\+]?[\d\s\-\(\)]{8,}$/.test(phone)
+    return /^[\+]?[\d\s\-\(\)]{8,}$/.test(phone);
   }
 
   showFieldError(field, message) {
-    field.style.borderColor = 'var(--error)'
-    
-    const existingError = field.nextElementSibling
-    if (existingError && existingError.classList.contains('error-message')) {
-      existingError.textContent = message
+    field.style.borderColor = "var(--error)";
+
+    const existingError = field.nextElementSibling;
+    if (existingError && existingError.classList.contains("error-message")) {
+      existingError.textContent = message;
     } else {
-      const errorMsg = document.createElement('div')
-      errorMsg.className = 'error-message'
-      errorMsg.style.cssText = 'color: var(--error); font-size: 0.875rem; margin-top: 0.25rem;'
-      errorMsg.textContent = message
-      field.parentNode.insertBefore(errorMsg, field.nextSibling)
+      const errorMsg = document.createElement("div");
+      errorMsg.className = "error-message";
+      errorMsg.style.cssText =
+        "color: var(--error); font-size: 0.875rem; margin-top: 0.25rem;";
+      errorMsg.textContent = message;
+      field.parentNode.insertBefore(errorMsg, field.nextSibling);
     }
   }
 
   handleSubmit(form) {
     // Clear previous errors
-    document.querySelectorAll('.error-message').forEach(el => el.remove())
-    document.querySelectorAll('input, textarea').forEach(el => {
-      el.style.borderColor = 'var(--border-color)'
-    })
+    document.querySelectorAll(".error-message").forEach((el) => el.remove());
+    document.querySelectorAll("input, textarea").forEach((el) => {
+      el.style.borderColor = "var(--border-color)";
+    });
 
     if (!this.validateForm(form)) {
-      this.showMessage('Por favor corrige los errores en el formulario', 'error')
-      return
+      this.showMessage(
+        "Por favor corrige los errores en el formulario",
+        "error"
+      );
+      return;
     }
 
-    const formData = new FormData(form)
+    const formData = new FormData(form);
     const customerData = {
-      firstName: formData.get('firstName'),
-      lastName: formData.get('lastName'),
-      email: formData.get('email'),
-      phone: formData.get('phone'),
-      address: formData.get('address'),
-      city: formData.get('city'),
-      zipCode: formData.get('zipCode'),
-      comments: formData.get('comments'),
-      acceptTerms: formData.get('acceptTerms'),
-      newsletter: formData.get('newsletter')
-    }
+      firstName: formData.get("firstName"),
+      lastName: formData.get("lastName"),
+      email: formData.get("email"),
+      phone: formData.get("phone"),
+      address: formData.get("address"),
+      city: formData.get("city"),
+      zipCode: formData.get("zipCode"),
+      comments: formData.get("comments"),
+      acceptTerms: formData.get("acceptTerms"),
+      newsletter: formData.get("newsletter"),
+    };
 
-    this.placeOrder(customerData)
+    this.placeOrder(customerData);
   }
 
   placeOrder(customerData) {
     try {
       // Create order
-      const order = this.cartService.createOrder(customerData)
-      
+      const order = this.cartService.createOrder(customerData);
+
       // Show success message
-      this.showOrderSuccess(order)
-      
+      this.showOrderSuccess(order);
+
       // Navigate to confirmation page
       setTimeout(() => {
-        document.dispatchEvent(new CustomEvent('navigate', { 
-          detail: { path: `/confirmacion/${order.id}` } 
-        }))
-      }, 2000)
-      
+        document.dispatchEvent(
+          new CustomEvent("navigate", {
+            detail: { path: `/confirmacion/${order.id}` },
+          })
+        );
+      }, 2000);
     } catch (error) {
-      console.error('Error placing order:', error)
-      this.showMessage('Hubo un error al procesar tu pedido. Por favor intenta de nuevo.', 'error')
+      console.error("Error placing order:", error);
+      this.showMessage(
+        "Hubo un error al procesar tu pedido. Por favor intenta de nuevo.",
+        "error"
+      );
     }
   }
 
   showOrderSuccess(order) {
-    document.dispatchEvent(new CustomEvent('modal:open', {
-      detail: {
-        title: '¡Pedido Confirmado!',
-        content: `
+    document.dispatchEvent(
+      new CustomEvent("modal:open", {
+        detail: {
+          title: "¡Pedido Confirmado!",
+          content: `
           <div class="text-center">
             <div style="font-size: 4rem; color: var(--success); margin-bottom: 1rem;">✓</div>
             <h3 style="margin-bottom: 1rem;">Tu pedido ha sido enviado exitosamente</h3>
@@ -333,20 +363,22 @@ export class CheckoutPage {
             </div>
           </div>
         `,
-        footer: '<button class="btn btn-primary" onclick="document.dispatchEvent(new CustomEvent(\'modal:close\'))">Continuar</button>'
-      }
-    }))
+          footer:
+            '<button class="btn btn-primary" onclick="document.dispatchEvent(new CustomEvent(\'modal:close\'))">Continuar</button>',
+        },
+      })
+    );
   }
 
-  showMessage(text, type = 'info') {
+  showMessage(text, type = "info") {
     const colors = {
-      success: 'var(--success)',
-      error: 'var(--error)',
-      warning: 'var(--warning)',
-      info: 'var(--primary-color)'
-    }
+      success: "var(--success)",
+      error: "var(--error)",
+      warning: "var(--warning)",
+      info: "var(--primary-color)",
+    };
 
-    const message = document.createElement('div')
+    const message = document.createElement("div");
     message.style.cssText = `
       position: fixed;
       top: 100px;
@@ -358,14 +390,14 @@ export class CheckoutPage {
       box-shadow: var(--shadow-lg);
       z-index: 1000;
       max-width: 400px;
-    `
-    message.textContent = text
-    
-    document.body.appendChild(message)
-    
+    `;
+    message.textContent = text;
+
+    document.body.appendChild(message);
+
     setTimeout(() => {
-      message.remove()
-    }, 5000)
+      message.remove();
+    }, 5000);
   }
 
   cleanup() {

@@ -5,12 +5,14 @@ Una plataforma web moderna para la venta y gestión de chapas metálicas que act
 ## Características Principales
 
 ### Para Clientes
+
 - **Compra sin registro**: Los clientes pueden realizar pedidos como invitados
 - **Carrito temporal**: Se mantiene por 12 horas sin necesidad de crear cuenta
 - **Catálogo completo**: Navegación fácil con filtros por categoría y búsqueda
 - **Proceso simplificado**: Checkout rápido con datos mínimos requeridos
 
 ### Para Administradores
+
 - **Panel de administración**: Gestión completa de productos y pedidos
 - **Gestión de inventario**: Añadir, editar y eliminar productos del catálogo
 - **Gestión de pedidos**: Seguimiento del estado de pedidos y comunicación con proveedores
@@ -58,16 +60,19 @@ src/
 ## Instalación y Desarrollo
 
 1. **Instalar dependencias**:
+
    ```bash
    npm install
    ```
 
 2. **Ejecutar en desarrollo**:
+
    ```bash
    npm run dev
    ```
 
 3. **Construir para producción**:
+
    ```bash
    npm run build
    ```
@@ -80,6 +85,7 @@ src/
 ## Flujo de Negocio
 
 ### Proceso del Cliente
+
 1. Navegar catálogo sin registro
 2. Añadir productos al carrito (temporal)
 3. Proceder al checkout como invitado
@@ -88,6 +94,7 @@ src/
 6. Recibir email con estado "Pendiente de Confirmación"
 
 ### Proceso del Administrador
+
 1. Login al panel de administración
 2. Revisar nuevos pedidos
 3. Generar resumen para consultar con proveedor
@@ -106,6 +113,7 @@ src/
 ## Configuración
 
 ### Variables de Entorno
+
 Crea un archivo `.env` en la raíz del proyecto:
 
 ```env
@@ -115,21 +123,25 @@ VITE_ADMIN_EMAIL=admin@plataformachapas.com
 ```
 
 ### Configuración de Email
+
 Para que funcionen las notificaciones por email, necesitarás configurar un servicio de email como:
+
 - SendGrid
-- Mailgun  
+- Mailgun
 - Amazon SES
 - SMTP personalizado
 
 ## Deployment
 
 ### Netlify/Vercel
+
 1. Conectar repositorio
 2. Configurar comando de build: `npm run build`
 3. Configurar directorio de output: `dist`
 4. Añadir variables de entorno
 
 ### Hosting tradicional
+
 1. Ejecutar `npm run build`
 2. Subir contenido de la carpeta `dist/`
 3. Configurar redirects para SPA
@@ -148,6 +160,7 @@ Para que funcionen las notificaciones por email, necesitarás configurar un serv
 ## Soporte
 
 Para soporte técnico o consultas sobre el proyecto:
+
 - Email: soporte@plataformachapas.com
 - Documentación: [Link a docs]
 - Issues: [GitHub Issues]

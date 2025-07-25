@@ -1,25 +1,27 @@
 export class Footer {
   render() {
-    const footerElement = document.getElementById('footer')
+    const footerElement = document.getElementById("footer");
     if (!footerElement) {
-      console.error('Footer element not found')
-      return
+      console.error("Footer element not found");
+      return;
     }
-    
-    footerElement.innerHTML = this.getHTML()
-    this.attachEventListeners()
+
+    footerElement.innerHTML = this.getHTML();
+    this.attachEventListeners();
   }
 
   attachEventListeners() {
     // Admin access link
-    const adminLink = document.querySelector('[data-admin-access]')
+    const adminLink = document.querySelector("[data-admin-access]");
     if (adminLink) {
-      adminLink.addEventListener('click', (e) => {
-        e.preventDefault()
-        document.dispatchEvent(new CustomEvent('navigate', { 
-          detail: { path: '/admin' } 
-        }))
-      })
+      adminLink.addEventListener("click", (e) => {
+        e.preventDefault();
+        document.dispatchEvent(
+          new CustomEvent("navigate", {
+            detail: { path: "/admin" },
+          })
+        );
+      });
     }
   }
 
@@ -85,6 +87,6 @@ export class Footer {
           </div>
         </div>
       </div>
-    `
+    `;
   }
 }
